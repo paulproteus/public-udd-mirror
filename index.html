@@ -1,4 +1,18 @@
 <html>
+<head>
+<script type="text/javascript" src="js/jquery-2.0.3.js"></script>
+<script type="text/javascript">
+ var geturl;
+ geturl = $.ajax({
+    type: "GET",
+    url: 'http://public-udd-mirror.xvm.mit.edu/stamp',
+    success: function () {
+      var modified = geturl.getResponseHeader('Last-Modified');
+      $("#date").text(modified);
+    }
+  });
+</script>
+</head>
 <h1>Welcome to a public UDD mirror</h1>
 <p>This is a public, <em>unofficial</em> mirror of
 the <a href="http://wiki.debian.org/UltimateDebianDatabase">Ultimate Debian Database</a>.</p>
@@ -15,6 +29,8 @@ the <a href="http://wiki.debian.org/UltimateDebianDatabase">Ultimate Debian Data
 <pre>psql --host=public-udd-mirror.xvm.mit.edu --user=public-udd-mirror udd --password</pre>
 <h1>Uptime notes</h1>
 <ul>
+<li>Last auto-update run: <span id="date">(Calculating...)</span> <noscript>The last auto-update run requires Javascript.)</noscript></li>
+<li><a href="last-log">Last auto-update log</a></li>
 <li>Expected downtime: weekend of July 20.</li>
 <li>Current status: ONLINE</li>
 </ul>
