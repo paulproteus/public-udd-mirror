@@ -39,7 +39,7 @@ if [ "$UDD_FILENAME" -nt "$SUCCESS_STAMP" ] ; then
     git submodule init
     git submodule update
 
-    . udd/scripts/dump-db.sh
+    sudo -u postgres bash -x udd/scripts/dump-db.sh
 fi
 
 touch "$SUCCESS_STAMP"
