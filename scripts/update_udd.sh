@@ -33,6 +33,13 @@ if [ "$UDD_FILENAME" -nt "$SUCCESS_STAMP" ] ; then
     sudo -u postgres createdb -T template0 -E SQL_ASCII udd
     echo CREATE EXTENSION debversion | sudo -u postgres psql udd
     zcat "$UDD_FILENAME" | sudo -u postgres psql udd
+
+    # Now, make sure we have the udd submodule properly
+    cd "$STARTING_CWD"
+    git submodule init
+    git submodule update
+
+    . udd/scripts/dump-db.sh
 fi
 
 touch "$SUCCESS_STAMP"
