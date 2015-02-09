@@ -4,6 +4,8 @@ USER=$(whoami)
 STARTING_CWD="/var/www"
 LOGFILE="$STARTING_CWD/last-log"
 
+TMPDBNAME="udd_$(date -I)_$$"
+
 exec &> "$LOGFILE"
 
 echo -n "Log started at "
@@ -28,17 +30,28 @@ wget -N "$UDD_URL"
 
 # Check if it is newer than the last success stamp
 if [ "$UDD_FILENAME" -nt "$SUCCESS_STAMP" ] ; then
-    sudo -u postgres dropdb udd || true # OK if this fails
+    # Create a temporary database for our insertion of the new snapshot
+    sudo -u postgres createdb -T template0 -E SQL_ASCII "$TMPDBNAME"
+    echo CREATE EXTENSION debversion | sudo -u postgres psql "$TMPDBNAME"
+    zcat "$UDD_FILENAME" | sudo -u postgres psql "$TMPDBNAME"
+    echo "Created $TMPDBNAME."
 
-    sudo -u postgres createdb -T template0 -E SQL_ASCII udd
-    echo CREATE EXTENSION debversion | sudo -u postgres psql udd
-    zcat "$UDD_FILENAME" | sudo -u postgres psql udd
+    # Now drop the old database and, in a hurry, rename the tmp DB
+    # into "udd" for public users.
+    sudo -u postgres dropdb udd || true # OK if this fails b/c the Db
+                                        # was missing.
+    # Do the rename!
+    echo "SELECT pg_terminate_backend(procpid) FROM pg_stat_activity WHERE datname = 'udd'; ALTER DATABASE ${TMPDBNAME} RENAME TO udd;" | sudo -u postgres psql
+
+    # Now, set permissions nicely.
+    for table in $(echo '\dt' | sudo -u postgres psql udd  | awk '{print $3}' | tail -n +3 ); do echo "GRANT  select ON $table TO "'"public-udd-mirror";' | sudo -u postgres psql udd ; done
 
     # Now, make sure we have the udd submodule properly
     cd "$STARTING_CWD"
     git submodule init
     git submodule update
 
+    # Now, do a database export of our own.
     sudo -u postgres bash -x udd/scripts/dump-db.sh
 fi
 
