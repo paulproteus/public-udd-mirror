@@ -13,9 +13,10 @@ fi
 
 exec &>> "$LOGFILE"
 
-echo -n "Log started at "
-date
-echo ''
+printf "\n\n"
+echo "============================================================================="
+printf "\n\n"
+echo "Log started at $(date -u)"
 
 UDD_URL=http://udd.debian.org/udd.sql.gz
 UDD_FILENAME=udd.sql.gz
