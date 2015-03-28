@@ -32,7 +32,7 @@ if [ ! -f "$SUCCESS_STAMP" ] ; then
 fi
 
 # Download the UDD dump, if it is newer
-wget -N "$UDD_URL"
+TZ=UTC wget -N "$UDD_URL"
 
 # Check if it is newer than the last success stamp
 if [ "$UDD_FILENAME" -nt "$SUCCESS_STAMP" ] ; then
