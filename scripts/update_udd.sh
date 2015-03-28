@@ -2,11 +2,11 @@
 set -e
 USER=$(whoami)
 STARTING_CWD="/var/www"
-LOGFILE="$STARTING_CWD/last-log"
+LOGFILE="$STARTING_CWD/logs/log"
 
 TMPDBNAME="udd_$(date -I)_$$"
 
-exec &> "$LOGFILE"
+exec &>> "$LOGFILE"
 
 echo -n "Log started at "
 date

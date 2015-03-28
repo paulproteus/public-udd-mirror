@@ -1,0 +1,10 @@
+/var/www/logs/log {
+  rotate 30
+  daily
+  compress
+  dateext
+  dateyesterday
+  delaycompress
+  missingok
+  su public-udd-mirror public-udd-mirror
+}
