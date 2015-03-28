@@ -59,6 +59,8 @@ if [ "$UDD_FILENAME" -nt "$SUCCESS_STAMP" ] ; then
 
     # Now, do a database export of our own.
     sudo -u postgres bash -x udd/scripts/dump-db.sh
+else
+    printf "\nThe database is already up-to-date, doing nothing.\n"
 fi
 
 touch "$SUCCESS_STAMP"
