@@ -6,6 +6,11 @@ LOGFILE="$STARTING_CWD/logs/log"
 
 TMPDBNAME="udd_$(date -I)_$$"
 
+if [ "$USER" != "public-udd-mirror" ] ; then
+    echo "For sysadmin's sake, please run this script as the public-udd-mirror user"
+    echo "This script has been called by $USER"
+fi
+
 exec &>> "$LOGFILE"
 
 echo -n "Log started at "
