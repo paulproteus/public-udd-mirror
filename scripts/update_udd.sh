@@ -61,7 +61,10 @@ if [ "$UDD_FILENAME" -nt "$SUCCESS_STAMP" ] ; then
     git submodule update
 
     # Now, do a database export of our own.
-    sudo -u postgres bash -x udd/scripts/dump-db.sh
+    if [ -d /srv/udd.debian.org/udd/web/dumps ] ; then
+        bash -x udd/scripts/dump-db.sh
+    fi
+
 
     echo
     echo "$(date -u): UDD mirror successfully updated!"
