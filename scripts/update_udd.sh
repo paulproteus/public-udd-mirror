@@ -48,10 +48,12 @@ if [ "$UDD_FILENAME" -nt "$SUCCESS_STAMP" ] ; then
     sudo -u postgres dropdb udd || true # OK if this fails b/c the Db
                                         # was missing.
     # Do the rename!
-    echo "SELECT pg_terminate_backend(procpid) FROM pg_stat_activity WHERE datname = 'udd'; ALTER DATABASE \"${TMPDBNAME}\" RENAME TO udd;" | sudo -u postgres psql
+    echo "SELECT pg_terminate_backend(procpid) FROM pg_stat_activity WHERE datname = 'udd'; ALTER DATABASE \"${TMPDBNAME}\" RENAME TO udd;" | sudo -u postgres psql -a
 
     # Now, set permissions nicely.
-    for table in $(echo '\dt' | sudo -u postgres psql udd  | awk '{print $3}' | tail -n +3 ); do echo "GRANT  select ON $table TO "'"public-udd-mirror";' | sudo -u postgres psql udd ; done
+    for table in $(echo '\dt' | sudo -u postgres psql udd  | awk '{print $3}' | tail -n +3 ) ; do
+        echo "GRANT  select ON $table TO "'"public-udd-mirror";' | sudo -u postgres psql -a udd
+    done
 
     # Now, make sure we have the udd submodule properly
     cd "$STARTING_CWD"
@@ -60,6 +62,9 @@ if [ "$UDD_FILENAME" -nt "$SUCCESS_STAMP" ] ; then
 
     # Now, do a database export of our own.
     sudo -u postgres bash -x udd/scripts/dump-db.sh
+
+    echo
+    echo "$(date -u): UDD mirror successfully updated!"
 else
     printf "\nThe database is already up-to-date, doing nothing.\n"
 fi
