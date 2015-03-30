@@ -18,8 +18,8 @@ echo "==========================================================================
 printf "\n\n"
 echo "Log started at $(date -u)"
 
-UDD_URL=http://udd.debian.org/udd.sql.gz
-UDD_FILENAME=udd.sql.gz
+UDD_URL=https://udd.debian.org/dumps/udd.dump
+UDD_FILENAME=$(basename "$UDD_URL")
 SUCCESS_STAMP="$STARTING_CWD/stamp"
 
 # change directory into our happy land
@@ -38,8 +38,9 @@ TZ=UTC wget -N "$UDD_URL"
 if [ "$UDD_FILENAME" -nt "$SUCCESS_STAMP" ] ; then
     # Create a temporary database for our insertion of the new snapshot
     sudo -u postgres createdb -T template0 -E SQL_ASCII "$TMPDBNAME"
-    echo CREATE EXTENSION debversion | sudo -u postgres psql "$TMPDBNAME"
-    zcat "$UDD_FILENAME" | sudo -u postgres psql "$TMPDBNAME"
+    echo CREATE EXTENSION debversion | sudo -u postgres psql -a "$TMPDBNAME"
+    sudo -u postgres pg_restore -j 4 -d "$TMPDBNAME" "$UDD_FILENAME"
+    echo
     echo "Created $TMPDBNAME."
 
     # Now drop the old database and, in a hurry, rename the tmp DB
