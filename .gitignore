@@ -1,3 +1,4 @@
 stamp
 logs
-snapshots
+dumps/*
+!dumps/README

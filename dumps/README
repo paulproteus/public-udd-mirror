@@ -1,0 +1,16 @@
+This directory contains some dumps, made out of the UDD mirror. For more
+up-to-date versions you might want to download them from the original
+https://udd.debian.org.
+
+udd-bugs.sql.xz
+    only tables related to Debian bugs
+udd-history.sql.gz
+    udd schema only
+udd-popcon.sql.xz
+    only tables related to popcon
+udd.sql.gz
+    full dump (excludins some "sensitive" tables)
+
+See https://anonscm.debian.org/cgit/collab-qa/udd.git/tree/scripts/dump-db.sh
+for more informations. Feel free to get in touch if you need a particular dump
+format.
