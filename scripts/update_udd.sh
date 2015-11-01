@@ -45,10 +45,15 @@ if [ "$UDD_FILENAME" -nt "$SUCCESS_STAMP" ] ; then
 
     # Now drop the old database and, in a hurry, rename the tmp DB
     # into "udd" for public users.
-    sudo -u postgres dropdb udd || true # OK if this fails b/c the Db
-                                        # was missing.
-    # Do the rename!
-    echo "SELECT pg_terminate_backend(procpid) FROM pg_stat_activity WHERE datname = 'udd'; ALTER DATABASE \"${TMPDBNAME}\" RENAME TO udd;" | sudo -u postgres psql -a
+    echo "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'udd';" | sudo -u postgres psql -a
+    sudo -u postgres dropdb udd || true # OK if this fails b/c the DB was missing or there still was open connections
+    if [ "${PIPESTATUS[0]}" -ne 0 ] ; then
+        echo "Failed at removing the old DB, exiting..."
+        exit 0
+    else
+        # if the dropdb above went well, then do the rename
+        echo "ALTER DATABASE \"${TMPDBNAME}\" RENAME TO udd;" | sudo -u postgres psql -a
+    fi
 
     # Now, set permissions nicely.
     for table in $(echo '\dt' | sudo -u postgres psql udd  | awk '{print $3}' | tail -n +3 ) ; do
