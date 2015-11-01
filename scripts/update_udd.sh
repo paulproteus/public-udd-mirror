@@ -11,6 +11,8 @@ if [ "$USER" != "public-udd-mirror" ] ; then
     echo "This script has been called by $USER"
 fi
 
+mkdir -p $(dirname "$LOGFILE")
+
 exec &>> "$LOGFILE"
 
 printf "\n\n"
