@@ -58,9 +58,7 @@ if [ "$UDD_FILENAME" -nt "$SUCCESS_STAMP" ] ; then
     fi
 
     # Now, set permissions nicely.
-    for table in $(echo '\dt' | sudo -u postgres psql udd  | awk '{print $3}' | tail -n +3 ) ; do
-        echo "GRANT  select ON $table TO "'"public-udd-mirror";' | sudo -u postgres psql -a udd
-    done
+    echo 'GRANT select ON ALL TABLES IN SCHEMA public TO "public-udd-mirror";' | sudo -u postgres psql -a udd
 
     # Now, make sure we have the udd submodule properly
     cd "$STARTING_CWD"
