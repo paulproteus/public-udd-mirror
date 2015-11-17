@@ -67,12 +67,6 @@ if [ "$UDD_FILENAME" -nt "$SUCCESS_STAMP" ] ; then
     git submodule init
     git submodule update
 
-    # Now, do a database export of our own.
-    if [ -d /srv/udd.debian.org/udd/web/dumps ] ; then
-        bash -x udd/scripts/dump-db.sh
-    fi
-
-
     echo
     echo "$(date -u): UDD mirror successfully updated!"
 else
