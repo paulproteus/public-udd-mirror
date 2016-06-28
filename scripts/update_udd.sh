@@ -3,6 +3,12 @@ set -e
 USER=$(whoami)
 STARTING_CWD="/var/www"
 LOGFILE="$STARTING_CWD/logs/log"
+LOCKFILE="$STARTING_CWD/lock"
+
+if [ -f "$LOCKFILE" ]; then
+    echo "Lockfile present, udd importer already running with PID $(cat "$LOCKFILE")" >&2
+    exit 1
+fi
 
 TMPDBNAME="udd_$(date -I)_$$"
 
@@ -19,6 +25,8 @@ printf "\n\n"
 echo "============================================================================="
 printf "\n\n"
 echo "Log started at $(date -u)"
+echo $$ > "$LOCKFILE"
+echo "lock taken at $LOCKFILE"
 
 UDD_URL=https://udd.debian.org/dumps/udd.dump
 UDD_FILENAME=$(basename "$UDD_URL")
@@ -72,3 +80,4 @@ else
 fi
 
 touch "$SUCCESS_STAMP"
+rm -vf "$LOCKFILE"
