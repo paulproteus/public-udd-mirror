@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+set -u
 USER=$(whoami)
 STARTING_CWD="/var/www"
 LOGFILE="$STARTING_CWD/logs/log"
