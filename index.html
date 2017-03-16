@@ -5,7 +5,7 @@
  var geturl;
  geturl = $.ajax({
     type: "GET",
-    url: 'http://public-udd-mirror.xvm.mit.edu/stamp',
+    url: 'https://udd-mirror.debian.net/stamp',
     success: function () {
       var modified = geturl.getResponseHeader('Last-Modified');
       $("#date").text(modified);
@@ -23,14 +23,14 @@ the <a href="https://udd.debian.org">Ultimate Debian Database</a>.</p>
 <h1>How to use it</h1>
 <p>Use these credentials:</p>
 <ul>
-<li>Host: public-udd-mirror.xvm.mit.edu</li>
+<li>Host: udd-mirror.debian.net</li>
 <li>Port: 5432</li>
 <li>Database: udd</li>
-<li>Username: public-udd-mirror</li>
-<li>Password: public-udd-mirror</li>
+<li>Username: udd-mirror</li>
+<li>Password: udd-mirror</li>
 </ul>
-<p>Or (remember, the password is public-udd-mirror):</p>
-<pre>psql --host=public-udd-mirror.xvm.mit.edu --user=public-udd-mirror udd --password</pre>
+<p>Or (remember, the password is udd-mirror):</p>
+<pre>psql --host=udd-mirror.debian.net --user=udd-mirror udd --password</pre>
 <p style="display: inline;">If you need to query the database inside a script (i.e. in a non-interactive shell) you can set the <pre style="display: inline;">PGPASSWORD</pre> environment variable with the password.</p>
 <p>It's also available on port 465 for the convenience of people behind weird firewalls.</p>
 <h1>Uptime notes</h1>

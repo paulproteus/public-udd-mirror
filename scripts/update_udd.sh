@@ -68,6 +68,7 @@ if [ "$UDD_FILENAME" -nt "$SUCCESS_STAMP" ] ; then
 
     # Now, set permissions nicely.
     echo 'GRANT select ON ALL TABLES IN SCHEMA public TO "public-udd-mirror";' | sudo -u postgres psql -a udd
+    echo 'GRANT select ON ALL TABLES IN SCHEMA public TO "udd-mirror";' | sudo -u postgres psql -a udd
 
     # Now, make sure we have the udd submodule properly
     cd "$STARTING_CWD"
