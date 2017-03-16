@@ -1,20 +1,8 @@
 <html>
 <head>
-<script type="text/javascript" src="js/jquery-2.0.3.js"></script>
-<script type="text/javascript">
- var geturl;
- geturl = $.ajax({
-    type: "GET",
-    url: 'https://udd-mirror.debian.net/stamp',
-    success: function () {
-      var modified = geturl.getResponseHeader('Last-Modified');
-      $("#date").text(modified);
-    },
-    error: function () {
-      $("#date").html("<em>cannot retrive last run information</em>");
-    }
-  });
-</script>
+<script type="text/javascript" src="static/jquery-2.0.3.js"></script>
+<script type="text/javascript" src="static/status.js"></script>
+<link href="static/style.css" rel="stylesheet">
 </head>
 <body>
 <h1>Welcome to a public UDD mirror</h1>
@@ -31,7 +19,7 @@ the <a href="https://udd.debian.org">Ultimate Debian Database</a>.</p>
 </ul>
 <p>Or (remember, the password is udd-mirror):</p>
 <pre>psql --host=udd-mirror.debian.net --user=udd-mirror udd --password</pre>
-<p style="display: inline;">If you need to query the database inside a script (i.e. in a non-interactive shell) you can set the <pre style="display: inline;">PGPASSWORD</pre> environment variable with the password.</p>
+<p class="inline">If you need to query the database inside a script (i.e. in a non-interactive shell) you can set the <pre class="inline">PGPASSWORD</pre> environment variable with the password.</p>
 <p>It's also available on port 465 for the convenience of people behind weird firewalls.</p>
 <h1>Uptime notes</h1>
 <ul>
