@@ -51,6 +51,9 @@ if [ "$UDD_FILENAME" -nt "$SUCCESS_STAMP" ] ; then
     sudo -u postgres createdb -T template0 -E SQL_ASCII "$TMPDBNAME"
     echo CREATE EXTENSION debversion | sudo -u postgres psql -a "$TMPDBNAME"
     sudo -u postgres pg_restore -j 4 -v -d "$TMPDBNAME" "$UDD_FILENAME"
+    echo "REVOKE CONNECT ON DATABASE ${TMPDBNAME} FROM public" | sudo -u postgres psql -a
+    echo "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE pid <> pg_backend_pid() AND datname = '${TMPDBNAME}'" | sudo -u postgres psql -a
+
     echo
     echo "Created $TMPDBNAME."
 
@@ -60,14 +63,17 @@ if [ "$UDD_FILENAME" -nt "$SUCCESS_STAMP" ] ; then
 
     # Now drop the old database and, in a hurry, rename the tmp DB
     # into "udd" for public users.
-    echo "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'udd';" | sudo -u postgres psql -a
+    echo "REVOKE CONNECT ON DATABASE udd FROM public" | sudo -u postgres psql -a
+    echo "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE pid <> pg_backend_pid() AND datname = 'udd'" | sudo -u postgres psql -a
     sudo -u postgres dropdb udd || true # OK if this fails b/c the DB was missing or there still was open connections
     if [ "${PIPESTATUS[0]}" -ne 0 ] ; then
         echo "Failed at removing the old DB, exiting..."
         exit 0
     else
-        # if the dropdb above went well, then do the rename
-        echo "ALTER DATABASE \"${TMPDBNAME}\" RENAME TO udd;" | sudo -u postgres psql -a
+        # if the dropdb above went well, then do the rename (and please don't fail)
+        echo "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE pid <> pg_backend_pid() AND datname = '${TMPDBNAME}'" | sudo -u postgres psql -a
+        echo "ALTER DATABASE \"${TMPDBNAME}\" RENAME TO udd" | sudo -u postgres psql -a
+        echo "GRANT CONNECT ON DATABASE udd TO public" | sudo -u postgres psql -a
     fi
 
     # Now, set permissions nicely.
