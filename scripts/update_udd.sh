@@ -54,6 +54,10 @@ if [ "$UDD_FILENAME" -nt "$SUCCESS_STAMP" ] ; then
     echo
     echo "Created $TMPDBNAME."
 
+    echo "Vacuuming..."
+    echo "VACUUM" | sudo -u postgres psql -a udd
+    echo "VACUUM" | sudo -u postgres psql -a "${TMPDBNAME}"
+
     # Now drop the old database and, in a hurry, rename the tmp DB
     # into "udd" for public users.
     echo "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'udd';" | sudo -u postgres psql -a
@@ -69,6 +73,9 @@ if [ "$UDD_FILENAME" -nt "$SUCCESS_STAMP" ] ; then
     # Now, set permissions nicely.
     echo 'GRANT select ON ALL TABLES IN SCHEMA public TO "public-udd-mirror";' | sudo -u postgres psql -a udd
     echo 'GRANT select ON ALL TABLES IN SCHEMA public TO "udd-mirror";' | sudo -u postgres psql -a udd
+
+    echo "Vacuuming + Analize..."
+    echo "VACUUM ANALYZE" | sudo -u postgres psql -a udd
 
     # Now, make sure we have the udd submodule properly
     cd "$STARTING_CWD"
