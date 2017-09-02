@@ -11,7 +11,7 @@ if [ -f "$LOCKFILE" ]; then
     exit 1
 fi
 
-TMPDBNAME="udd_$(date -I)_$$"
+TMPDBNAME="udd_$(date +%Y%m%d)_$$"
 
 if [ "$USER" != "public-udd-mirror" ] ; then
     echo "For sysadmin's sake, please run this script as the public-udd-mirror user"
