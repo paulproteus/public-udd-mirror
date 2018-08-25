@@ -2,3 +2,6 @@ stamp
 lock
 logs
 udd/
+
+# deploy is in ~
+.wget-hsts
