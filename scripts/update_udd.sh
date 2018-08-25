@@ -83,11 +83,6 @@ if [ "$UDD_FILENAME" -nt "$SUCCESS_STAMP" ] ; then
     echo "Vacuuming + Analize..."
     echo "VACUUM ANALYZE" | sudo -u postgres psql -a udd
 
-    # Now, make sure we have the udd submodule properly
-    cd "$STARTING_CWD"
-    git submodule init
-    git submodule update
-
     echo
     echo "$(date -u): UDD mirror successfully updated!"
 else
