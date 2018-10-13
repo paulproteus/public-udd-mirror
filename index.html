@@ -21,6 +21,8 @@ the <a href="https://udd.debian.org">Ultimate Debian Database</a>.</p>
 <pre>psql --host=udd-mirror.debian.net --user=udd-mirror udd --password</pre>
 <p class="inline">If you need to query the database inside a script (i.e. in a non-interactive shell) you can set the <pre class="inline">PGPASSWORD</pre> environment variable with the password.</p>
 <p>It's also available on port 465 for the convenience of people behind weird firewalls.</p>
+<p class="inline">This service used to be available under a different name, <i>public-udd-mirror.xvm.mit.edu</i>, with a different user and password (<pre class="inline">public-udd-mirror</pre>).<br>
+We <a href="https://github.com/paulproteus/public-udd-mirror/issues/3">decided</a> to simplify the naming into <pre class="inline">udd-mirror</pre>, but the old address and the old user/password will continue to work indefinitely, we have no plans to deprecate and remove them.</p>
 <h1>Uptime notes</h1>
 <ul>
 <li>Last auto-update run: <span id="date">(Calculating...)</span> <noscript>(the last auto-update run requires Javascript.)</noscript></li>
