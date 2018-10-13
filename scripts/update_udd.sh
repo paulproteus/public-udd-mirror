@@ -18,13 +18,13 @@ if [ "$USER" != "public-udd-mirror" ] ; then
     echo "This script has been called by $USER"
 fi
 
-mkdir -p $(dirname "$LOGFILE")
+mkdir -p "$(dirname "$LOGFILE")"
 
 exec &>> "$LOGFILE"
 
-printf "\n\n"
+printf '\n\n'
 echo "============================================================================="
-printf "\n\n"
+printf '\n\n'
 echo "Log started at $(date -u)"
 echo $$ > "$LOCKFILE"
 echo "lock taken at $LOCKFILE"
@@ -86,7 +86,7 @@ if [ "$UDD_FILENAME" -nt "$SUCCESS_STAMP" ] ; then
     echo
     echo "$(date -u): UDD mirror successfully updated!"
 else
-    printf "\nThe database is already up-to-date, doing nothing.\n"
+    printf '\nThe database is already up-to-date, doing nothing.\n'
 fi
 
 touch "$SUCCESS_STAMP"
