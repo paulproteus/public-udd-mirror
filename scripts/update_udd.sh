@@ -58,7 +58,6 @@ if [ "$UDD_FILENAME" -nt "$SUCCESS_STAMP" ] ; then
     echo "Created $TMPDBNAME."
 
     echo "Vacuuming..."
-    echo "VACUUM" | sudo -u postgres psql -a udd
     echo "VACUUM" | sudo -u postgres psql -a "${TMPDBNAME}"
 
     # Now drop the old database and, in a hurry, rename the tmp DB
