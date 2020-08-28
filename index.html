@@ -18,7 +18,7 @@ the <a href="https://udd.debian.org">Ultimate Debian Database</a>.</p>
     <li>Password: <pre class="inline">udd-mirror</pre></li>
 </ul>
 <pre>psql "postgresql://udd-mirror:udd-mirror@udd-mirror.debian.net/udd"</pre>
-<p class="inline">If you need to query the database inside a script (i.e. in a non-interactive shell) you can set the <pre class="inline">PGPASSWORD</pre> environment variable with the password. On older psql versions, you will need to use <pre>psql --host=udd-mirror.debian.net --user=udd-mirror udd --password</pre>
+<p><small>On older psql versions, you will need to use <pre>psql --host=udd-mirror.debian.net --user=udd-mirror udd --password. See above for password. You can store the password in the <tt>PGPASSWORD</tt> environment variable so you don't have to type it every time.</small></p>
 </p>
 <p>It's also available on port 465 for the convenience of people behind weird firewalls.</p>
 <p class="inline">This service used to be available under a different name, <i>public-udd-mirror.xvm.mit.edu</i>, with a different user and password (<pre class="inline">public-udd-mirror</pre>).<br>
