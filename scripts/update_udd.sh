@@ -61,6 +61,14 @@ if [ "$UDD_FILENAME" -nt "$SUCCESS_STAMP" ] ; then
     echo "Vacuuming..."
     echo "VACUUM" | sudo -u postgres psql -a "${TMPDBNAME}"
 
+    # Ensure public access login accounts exists (this may print an error, which is OK)
+    sudo -u postgres psql <<- "EOF"
+    CREATE USER "udd" WITH PASSWORD 'udd';
+    CREATE USER "udd-mirror" WITH PASSWORD 'udd-mirror';
+    ALTER DEFAULT PRIVILEGES FOR USER "udd" IN SCHEMA "public" GRANT SELECT ON TABLES TO "udd";
+    ALTER DEFAULT PRIVILEGES FOR USER "udd-mirror" IN SCHEMA "public" GRANT SELECT ON TABLES TO "udd-mirror";
+EOF
+
     # Now drop the old database and, in a hurry, rename the tmp DB
     # into "udd" for public users.
     echo "REVOKE CONNECT ON DATABASE udd FROM public" | sudo -u postgres psql -a
