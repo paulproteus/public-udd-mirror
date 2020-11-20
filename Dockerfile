@@ -10,6 +10,9 @@ COPY crontab /etc/crontab
 COPY scripts/update_udd.sh /usr/local/bin/update_udd.sh
 COPY public-udd-mirror-sudoers.conf /etc/sudoers.d/public-udd-mirror-sudoers
 COPY postgreslisten.conf /etc/postgresql/11/main/conf.d/
+COPY psql-init-permissions.sql /etc/postgresql/11/
+RUN echo 'host all udd-mirror 0.0.0.0/0 md5' >> /etc/postgresql/11/main/pg_hba.conf
+RUN echo 'host all udd 0.0.0.0/0 md5' >> /etc/postgresql/11/main/pg_hba.conf
 EXPOSE 80
 EXPOSE 5432
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
