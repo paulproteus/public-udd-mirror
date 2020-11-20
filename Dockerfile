@@ -9,4 +9,6 @@ COPY rsyslog.conf /etc/rsyslog.d/stdout.conf
 COPY crontab /etc/crontab
 COPY scripts/update_udd.sh /usr/local/bin/update_udd.sh
 COPY public-udd-mirror-sudoers.conf /etc/sudoers.d/public-udd-mirror-sudoers
+EXPOSE 80
+EXPOSE 5432
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
