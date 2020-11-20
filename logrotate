@@ -1,6 +1,6 @@
 # This file has to be owned by root:root !!
 
-/var/www/logs/log {
+/var/www/html/logs/log {
   rotate 30
   daily
   compress

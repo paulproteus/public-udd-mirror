@@ -2,9 +2,9 @@
 set -e
 set -u
 USER=$(whoami)
-STARTING_CWD="/var/www"
-LOGFILE="$STARTING_CWD/logs/log"
-LOCKFILE="$STARTING_CWD/lock"
+STARTING_CWD="/var/www/html"
+LOGFILE="$STARTING_CWD/logs/log.txt"
+LOCKFILE="/tmp/update_udd.$USER.lock"
 
 if [ -f "$LOCKFILE" ]; then
     echo "Lockfile present, udd importer already running with PID $(cat "$LOCKFILE")" >&2
@@ -20,7 +20,7 @@ fi
 
 mkdir -p "$(dirname "$LOGFILE")"
 
-exec &>> "$LOGFILE"
+exec &> >(tee -a "$LOGFILE")
 
 printf '\n\n'
 echo "============================================================================="
@@ -43,6 +43,7 @@ if [ ! -f "$SUCCESS_STAMP" ] ; then
 fi
 
 # Download the UDD dump, if it is newer
+echo "Downloading udd.dump"
 TZ=UTC wget -N --no-verbose "$UDD_URL"
 
 # Check if it is newer than the last success stamp

@@ -1,1 +1,4 @@
-* * * * * root echo hi
+@reboot root echo crontab ready
+@reboot root echo syslog ready | logger
+@reboot public-udd-mirror bash /usr/local/bin/update_udd.sh 2>&1 | logger
+5 */4 * * * public-udd-mirror /usr/local/bin/update_udd.sh
