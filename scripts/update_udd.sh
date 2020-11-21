@@ -51,7 +51,7 @@ if [ "$UDD_FILENAME" -nt "$SUCCESS_STAMP" ] ; then
     # Create a temporary database for our insertion of the new snapshot
     sudo -u postgres createdb -T template0 -E SQL_ASCII "$TMPDBNAME"
     echo CREATE EXTENSION debversion | sudo -u postgres psql -a "$TMPDBNAME"
-    sudo -u postgres pg_restore -j 4 -v -d "$TMPDBNAME" "$UDD_FILENAME"
+    sudo -u postgres pg_restore -1 -v -d "$TMPDBNAME" "$UDD_FILENAME"
     echo "REVOKE CONNECT ON DATABASE ${TMPDBNAME} FROM public" | sudo -u postgres psql -a
     echo "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE pid <> pg_backend_pid() AND datname = '${TMPDBNAME}'" | sudo -u postgres psql -a
 
