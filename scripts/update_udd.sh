@@ -88,7 +88,7 @@ EOF
     echo 'GRANT select ON ALL TABLES IN SCHEMA public TO "public-udd-mirror";' | sudo -u postgres psql -a udd
     echo 'GRANT select ON ALL TABLES IN SCHEMA public TO "udd-mirror";' | sudo -u postgres psql -a udd
 
-    echo "Vacuuming + Analize..."
+    echo "Vacuuming + Analyze..."
     echo "VACUUM ANALYZE" | sudo -u postgres psql -a udd
 
     echo
