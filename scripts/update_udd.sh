@@ -48,12 +48,14 @@ TZ=UTC wget -N --no-verbose "$UDD_URL"
 
 # Check if it is newer than the last success stamp
 if [ "$UDD_FILENAME" -nt "$SUCCESS_STAMP" ] ; then
-    # Ensure public access login accounts exists (this may print an error, which is OK)
+    # Ensure public access login accounts exist (this may print an error, which is OK)
     sudo -u postgres psql <<- "EOF"
     CREATE USER "udd" WITH PASSWORD 'udd';
     CREATE USER "udd-mirror" WITH PASSWORD 'udd-mirror';
+    CREATE USER "public-udd-mirror" WITH PASSWORD 'public-udd-mirror';
     ALTER DEFAULT PRIVILEGES FOR USER "udd" IN SCHEMA "public" GRANT SELECT ON TABLES TO "udd";
     ALTER DEFAULT PRIVILEGES FOR USER "udd-mirror" IN SCHEMA "public" GRANT SELECT ON TABLES TO "udd-mirror";
+    ALTER DEFAULT PRIVILEGES FOR USER "public-udd-mirror" IN SCHEMA "public" GRANT SELECT ON TABLES TO "public-udd-mirror";
 EOF
 
     # Create a temporary database for our insertion of the new snapshot
