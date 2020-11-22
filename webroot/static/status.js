@@ -1,7 +1,7 @@
 var geturl;
 geturl = $.ajax({
    type: "GET",
-   url: 'https://udd-mirror.debian.net/stamp',
+   url: '/stamp',
    success: function () {
      var modified = geturl.getResponseHeader('Last-Modified');
      $("#date").text(modified);
