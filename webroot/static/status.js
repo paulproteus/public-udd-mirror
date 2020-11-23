@@ -1,7 +1,7 @@
 var geturl;
 geturl = $.ajax({
-   type: "GET",
-   url: '/stamp',
+   type: "HEAD",
+   url: '/logs/stamp.txt',
    success: function () {
      var modified = geturl.getResponseHeader('Last-Modified');
      $("#date").text(modified);

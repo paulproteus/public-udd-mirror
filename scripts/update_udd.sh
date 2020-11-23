@@ -5,6 +5,7 @@ USER=$(whoami)
 STARTING_CWD="/var/www/html"
 LOGFILE="$STARTING_CWD/logs/log.txt"
 LOCKFILE="/tmp/update_udd.$USER.lock"
+SUCCESS_STAMP="$STARTING_CWD/logs/stamp.txt"
 
 if [ -f "$LOCKFILE" ]; then
     echo "Lockfile present, udd importer already running with PID $(cat "$LOCKFILE")" >&2
@@ -31,7 +32,6 @@ echo "lock taken at $LOCKFILE"
 
 UDD_URL=https://udd.debian.org/dumps/udd.dump
 UDD_FILENAME=$(basename "$UDD_URL")
-SUCCESS_STAMP="$STARTING_CWD/stamp"
 
 # change directory into our happy land
 mkdir -p "/tmp/$USER"
