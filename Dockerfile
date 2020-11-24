@@ -4,7 +4,7 @@ RUN adduser --system public-udd-mirror
 COPY webroot /var/www/html
 RUN mkdir -p /var/www/html/logs && chown public-udd-mirror /var/www/html/logs
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-COPY rsyslog.conf /etc/rsyslog.d/stdout.conf
+COPY rsyslog.conf /etc/rsyslog.conf
 COPY crontab /etc/crontab
 COPY scripts/update_udd.sh /usr/local/bin/update_udd.sh
 COPY public-udd-mirror-sudoers.conf /etc/sudoers.d/public-udd-mirror-sudoers
