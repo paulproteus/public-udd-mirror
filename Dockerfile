@@ -3,7 +3,6 @@ RUN apt-get update && apt-get install -y nginx cron supervisor postgresql postgr
 RUN adduser --system public-udd-mirror
 COPY webroot /var/www/html
 RUN mkdir -p /var/www/html/logs && chown public-udd-mirror /var/www/html/logs
-RUN touch --date=1970-01-01 /var/www/html/stamp && chown public-udd-mirror /var/www/html/stamp
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY rsyslog.conf /etc/rsyslog.d/stdout.conf
 COPY crontab /etc/crontab
