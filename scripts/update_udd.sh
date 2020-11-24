@@ -14,8 +14,8 @@ fi
 
 TMPDBNAME="udd_$(date +%Y%m%d)_$$"
 
-if [ "$USER" != "public-udd-mirror" ] ; then
-    echo "For sysadmin's sake, please run this script as the public-udd-mirror user"
+if [ "$USER" != "udd-mirror" ] ; then
+    echo "For sysadmin's sake, please run this script as the udd-mirror user"
     echo "This script has been called by $USER"
 fi
 
