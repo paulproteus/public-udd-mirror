@@ -88,6 +88,35 @@ $ echo 'select count(*) from upload_history;' | psql "postgresql://udd:udd@172.1
 (1 row)
 ```
 
-Set up systemd to run the container at system start.
+Set up systemd to update and start the container at system boot. Create `/etc/systemd/system/udd-mirror.service` with these contents and run `sudo systemctl enable udd-mirror`.
+
+```
+[Unit]
+Description=UDD mirror
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+User=udd-mirror
+ExecStart=/bin/bash -c 'cd /srv/udd-mirror && git pull && docker build . && docker run -p 0.0.0.0:5432:5432 --net udd-mirror-network --mount source=udd-mirror-postgres,target=/var/lib/postgresql --mount source=udd-mirror-logs,target=/var/www/html/logs --ip 172.18.0.2 $(docker build -q .)'
+
+[Install]
+WantedBy=multi-user.target
+```
 
 Set up nginx or another reverse proxy to forward HTTP/HTTPS to the container.
+
+Deploying new versions to production
+====================================
+
+If everything is set up per the previous suggestions, once new code is in this GitHub repository,
+you can ssh to the production host and run:
+
+```
+sudo systemctl stop udd-mirror
+sudo systemctl start udd-mirror
+sudo journalctl -u udd-mirror -f
+```
