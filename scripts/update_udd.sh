@@ -68,9 +68,6 @@ EOF
     echo
     echo "Created $TMPDBNAME."
 
-    echo "Vacuuming..."
-    echo "VACUUM" | sudo -u postgres psql -a "${TMPDBNAME}"
-
     # Now drop the old database and, in a hurry, rename the tmp DB
     # into "udd" for public users.
     echo "REVOKE CONNECT ON DATABASE udd FROM public" | sudo -u postgres psql -a
@@ -89,9 +86,6 @@ EOF
     # Now, set permissions nicely.
     echo 'GRANT select ON ALL TABLES IN SCHEMA public TO "public-udd-mirror";' | sudo -u postgres psql -a udd
     echo 'GRANT select ON ALL TABLES IN SCHEMA public TO "udd-mirror";' | sudo -u postgres psql -a udd
-
-    echo "Vacuuming + Analyze..."
-    echo "VACUUM ANALYZE" | sudo -u postgres psql -a udd
 
     echo
     echo "$(date -u): UDD mirror successfully updated!"
