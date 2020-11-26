@@ -3,4 +3,4 @@
 @reboot udd-mirror bash /usr/local/bin/update_udd.sh 2>&1 | logger
 5 */4 * * * udd-mirror /usr/local/bin/update_udd.sh
 @reboot root /usr/sbin/logrotate /etc/logrotate.conf 2>&1 | logger
-@hourly root /usr/sbin/logrotate /etc/logrotate.conf 2>&1 | logger
+@daily root /usr/sbin/logrotate /etc/logrotate.conf 2>&1 | logger
