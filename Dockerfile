@@ -11,7 +11,6 @@ COPY scripts/update_udd.sh /usr/local/bin/update_udd.sh
 COPY udd-mirror-sudoers.conf /etc/sudoers.d/udd-mirror-sudoers
 COPY postgresql-udd-mirror.conf /etc/postgresql/11/main/conf.d/
 RUN echo 'host all udd-mirror 0.0.0.0/0 md5' >> /etc/postgresql/11/main/pg_hba.conf
-RUN echo 'host all udd 0.0.0.0/0 md5' >> /etc/postgresql/11/main/pg_hba.conf
 RUN echo 'host all public-udd-mirror 0.0.0.0/0 md5' >> /etc/postgresql/11/main/pg_hba.conf
 EXPOSE 80
 EXPOSE 5432
