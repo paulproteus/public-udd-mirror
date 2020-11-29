@@ -3,5 +3,7 @@ lock
 logs
 udd/
 
+.DS_Store
+
 # deploy is in ~
 .wget-hsts
