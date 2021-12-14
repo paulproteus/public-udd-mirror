@@ -44,7 +44,12 @@ fi
 
 # Download the UDD dump, if it is newer
 echo "Downloading udd.dump"
-TZ=UTC wget -N --no-verbose "$UDD_URL"
+if ! TZ=UTC wget -N --no-verbose "$UDD_URL"; then
+    echo "wget failed!" >&2
+    echo "Releasing lock."
+    rm -vf "$LOCKFILE"
+    exit 1
+fi
 
 # Check if it is newer than the last success stamp
 if [ "$UDD_FILENAME" -nt "$SUCCESS_STAMP" ] ; then
@@ -94,4 +99,5 @@ else
 fi
 
 touch "$SUCCESS_STAMP"
+echo "Releasing lock."
 rm -vf "$LOCKFILE"
