@@ -86,6 +86,8 @@ EOF
     if sudo -u postgres psql -lqt | cut -d \| -f 1 | grep -qw udd ; then
         echo "REVOKE CONNECT ON DATABASE udd FROM public" | sudo -u postgres psql -a
         echo "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE pid <> pg_backend_pid() AND datname = 'udd'" | sudo -u postgres psql -a
+        sleep 2 # wait 2 sec and do it again, it seems sometimes there are still open connections
+        echo "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE pid <> pg_backend_pid() AND datname = 'udd'" | sudo -u postgres psql -a
         sudo -u postgres dropdb udd
     fi
     # if the dropdb above went well, then do the rename (and please don't fail)
