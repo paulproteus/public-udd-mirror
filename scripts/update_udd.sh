@@ -72,21 +72,17 @@ EOF
 
     echo
     echo "Created $TMPDBNAME."
-
     # Now drop the old database and, in a hurry, rename the tmp DB
     # into "udd" for public users.
-    echo "REVOKE CONNECT ON DATABASE udd FROM public" | sudo -u postgres psql -a
-    echo "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE pid <> pg_backend_pid() AND datname = 'udd'" | sudo -u postgres psql -a
-    sudo -u postgres dropdb udd || true # OK if this fails b/c the DB was missing or there still was open connections
-    if [ "${PIPESTATUS[0]}" -ne 0 ] ; then
-        echo "Failed at removing the old DB, exiting..."
-        exit 0
-    else
-        # if the dropdb above went well, then do the rename (and please don't fail)
-        echo "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE pid <> pg_backend_pid() AND datname = '${TMPDBNAME}'" | sudo -u postgres psql -a
-        echo "ALTER DATABASE \"${TMPDBNAME}\" RENAME TO udd" | sudo -u postgres psql -a
-        echo "GRANT CONNECT ON DATABASE udd TO public" | sudo -u postgres psql -a
+    if sudo -u postgres psql -lqt | cut -d \| -f 1 | grep -qw udd ; then
+        echo "REVOKE CONNECT ON DATABASE udd FROM public" | sudo -u postgres psql -a
+        echo "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE pid <> pg_backend_pid() AND datname = 'udd'" | sudo -u postgres psql -a
+        sudo -u postgres dropdb udd
     fi
+    # if the dropdb above went well, then do the rename (and please don't fail)
+    echo "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE pid <> pg_backend_pid() AND datname = '${TMPDBNAME}'" | sudo -u postgres psql -a
+    echo "ALTER DATABASE \"${TMPDBNAME}\" RENAME TO udd" | sudo -u postgres psql -a
+    echo "GRANT CONNECT ON DATABASE udd TO public" | sudo -u postgres psql -a
 
     # Now, set permissions nicely.
     echo 'GRANT select ON ALL TABLES IN SCHEMA public TO "public-udd-mirror";' | sudo -u postgres psql -a udd
