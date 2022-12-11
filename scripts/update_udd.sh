@@ -14,6 +14,14 @@ fi
 
 TMPDBNAME="udd_$(date +%Y%m%d)_$$"
 
+trap_dropdb() {
+    echo "trap invoked, deleting the temporary database"
+    echo "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE pid <> pg_backend_pid() AND datname = '${TMPDBNAME}'" | sudo -u postgres psql -a
+    sudo -u postgres dropdb "$TMPDBNAME"
+    echo "Releasing lock."
+    rm -vf "$LOCKFILE"
+}
+
 if [ "$USER" != "udd-mirror" ] ; then
     echo "For sysadmin's sake, please run this script as the udd-mirror user"
     echo "This script has been called by $USER"
@@ -63,6 +71,7 @@ if [ "$UDD_FILENAME" -nt "$SUCCESS_STAMP" ] ; then
     ALTER DEFAULT PRIVILEGES FOR USER "public-udd-mirror" IN SCHEMA "public" GRANT SELECT ON TABLES TO "public-udd-mirror";
 EOF
 
+    trap trap_dropdb EXIT
     # Create a temporary database for our insertion of the new snapshot
     sudo -u postgres createdb -T template0 -E SQL_ASCII "$TMPDBNAME"
     echo CREATE EXTENSION debversion | sudo -u postgres psql -a "$TMPDBNAME"
@@ -82,6 +91,7 @@ EOF
     # if the dropdb above went well, then do the rename (and please don't fail)
     echo "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE pid <> pg_backend_pid() AND datname = '${TMPDBNAME}'" | sudo -u postgres psql -a
     echo "ALTER DATABASE \"${TMPDBNAME}\" RENAME TO udd" | sudo -u postgres psql -a
+    trap - EXIT
     echo "GRANT CONNECT ON DATABASE udd TO public" | sudo -u postgres psql -a
 
     # Now, set permissions nicely.
