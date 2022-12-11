@@ -61,11 +61,17 @@ fi
 
 # Check if it is newer than the last success stamp
 if [ "$UDD_FILENAME" -nt "$SUCCESS_STAMP" ] ; then
-    # Ensure public access login accounts exist (this may print an error, which is OK)
-    sudo -u postgres psql <<- "EOF"
-    CREATE USER "udd" WITH PASSWORD 'udd';
-    CREATE USER "udd-mirror" WITH PASSWORD 'udd-mirror';
-    CREATE USER "public-udd-mirror" WITH PASSWORD 'public-udd-mirror';
+    # Ensure public access login accounts exist
+    if ! sudo -u postgres psql -t -c '\du' |grep -qw udd; then
+        echo "CREATE USER 'udd' WITH PASSWORD 'udd'" | sudo -u postgres psql -a
+    fi
+    if ! sudo -u postgres psql -t -c '\du' |grep -qw udd-mirror; then
+        echo "CREATE USER 'udd-mirror' WITH PASSWORD 'udd-mirror'" | sudo -u postgres psql -a
+    fi
+    if ! sudo -u postgres psql -t -c '\du' |grep -qw public-udd-mirror; then
+        echo "CREATE USER 'public-udd-mirror' WITH PASSWORD 'public-udd-mirror'" | sudo -u postgres psql -a
+    fi
+    sudo -u postgres psql -a <<- "EOF"
     ALTER DEFAULT PRIVILEGES FOR USER "udd" IN SCHEMA "public" GRANT SELECT ON TABLES TO "udd";
     ALTER DEFAULT PRIVILEGES FOR USER "udd-mirror" IN SCHEMA "public" GRANT SELECT ON TABLES TO "udd-mirror";
     ALTER DEFAULT PRIVILEGES FOR USER "public-udd-mirror" IN SCHEMA "public" GRANT SELECT ON TABLES TO "public-udd-mirror";
