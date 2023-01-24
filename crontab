@@ -1,6 +1,6 @@
 @reboot root echo crontab ready
 @reboot root echo syslog ready 2>&1 | logger
 @reboot udd-mirror bash /usr/local/bin/update_udd.sh 2>&1 | logger
-5 */2 * * * udd-mirror /usr/local/bin/update_udd.sh
+5 */2 * * * udd-mirror /usr/local/bin/update_udd.sh | logger
 @reboot root /usr/sbin/logrotate /etc/logrotate.conf 2>&1 | logger
 @daily root /usr/sbin/logrotate /etc/logrotate.conf 2>&1 | logger
