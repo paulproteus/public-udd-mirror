@@ -1,5 +1,5 @@
-FROM debian:bullseye
-RUN apt-get update && apt-get install -y nginx cron supervisor postgresql postgresql-13-debversion rsyslog wget sudo logrotate sysstat-
+FROM debian:trixie
+RUN apt-get update && apt-get install -y nginx cron supervisor postgresql postgresql-17-debversion rsyslog wget sudo logrotate sysstat-
 RUN adduser --system udd-mirror
 COPY webroot /var/www/html
 RUN mkdir -p /var/www/html/logs && chown udd-mirror /var/www/html/logs
@@ -9,9 +9,9 @@ COPY logrotate.conf /etc/logrotate.conf
 COPY crontab /etc/crontab
 COPY scripts/update_udd.sh /usr/local/bin/update_udd.sh
 COPY udd-mirror-sudoers.conf /etc/sudoers.d/udd-mirror-sudoers
-COPY postgresql-udd-mirror.conf /etc/postgresql/13/main/conf.d/
-RUN echo 'host all udd-mirror 0.0.0.0/0 md5' >> /etc/postgresql/13/main/pg_hba.conf
-RUN echo 'host all public-udd-mirror 0.0.0.0/0 md5' >> /etc/postgresql/13/main/pg_hba.conf
+COPY postgresql-udd-mirror.conf /etc/postgresql/17/main/conf.d/
+RUN echo 'host all udd-mirror 0.0.0.0/0 md5' >> /etc/postgresql/17/main/pg_hba.conf
+RUN echo 'host all public-udd-mirror 0.0.0.0/0 md5' >> /etc/postgresql/17/main/pg_hba.conf
 EXPOSE 80
 EXPOSE 5432
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
