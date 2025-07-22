@@ -1,5 +1,5 @@
 FROM debian:trixie
-RUN apt-get update && apt-get install -y nginx cron supervisor postgresql postgresql-17-debversion rsyslog wget sudo logrotate sysstat-
+RUN apt-get update && apt-get install -y nginx libjs-jquery cron supervisor postgresql postgresql-17-debversion rsyslog wget sudo logrotate sysstat-
 RUN adduser --system udd-mirror
 COPY webroot /var/www/html
 RUN mkdir -p /var/www/html/logs && chown udd-mirror /var/www/html/logs
