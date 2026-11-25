@@ -63,6 +63,7 @@ Create a volume to store Postgres data. This allows data to persist if the conta
 ```
 docker volume create udd-mirror-postgres
 docker volume create udd-mirror-logs
+docker volume create udd-mirror-letsencrypt
 ```
 
 Create a Docker network so that 0.0.0.0 on the container points to a single IP address on the outer machine.
@@ -75,7 +76,7 @@ Run the container, exposing port 5432 globally.
 
 ```
 docker build .
-docker run -p 0.0.0.0:5432:5432 --net udd-mirror-network --mount source=udd-mirror-postgres,target=/var/lib/postgresql --mount source=udd-mirror-logs,target=/var/www/html/logs --ip 172.18.0.2 $(docker build -q .)
+docker run -p 0.0.0.0:5432:5432 --net udd-mirror-network --mount source=udd-mirror-postgres,target=/var/lib/postgresql --mount source=udd-mirror-logs,target=/var/www/html/logs --mount source=udd-mirror-letsencrypt,target=/etc/letsencrypt -e TLS_DOMAIN=udd-mirror.debian.net -e TLS_EMAIL=admin@example.org --ip 172.18.0.2 $(docker build -q .)
 ```
 
 Validate that the container is running a Postgres instance with some data.
@@ -101,13 +102,48 @@ Type=simple
 Restart=always
 RestartSec=1
 User=udd-mirror
-ExecStart=/bin/bash -c 'cd /srv/udd-mirror && git pull && docker build . && docker run -p 0.0.0.0:5432:5432 --net udd-mirror-network --mount source=udd-mirror-postgres,target=/var/lib/postgresql --mount source=udd-mirror-logs,target=/var/www/html/logs --ip 172.18.0.2 $(docker build -q .)'
+ExecStart=/bin/bash -c 'cd /srv/udd-mirror && git pull && docker build . && docker run -p 0.0.0.0:5432:5432 --net udd-mirror-network --mount source=udd-mirror-postgres,target=/var/lib/postgresql --mount source=udd-mirror-logs,target=/var/www/html/logs --mount source=udd-mirror-letsencrypt,target=/etc/letsencrypt -e TLS_DOMAIN=udd-mirror.debian.net -e TLS_EMAIL=admin@example.org --ip 172.18.0.2 $(docker build -q .)'
 
 [Install]
 WantedBy=multi-user.target
 ```
 
 Set up nginx or another reverse proxy to forward HTTP/HTTPS to the container.
+
+TLS certificate for Postgres
+============================
+
+Postgres always accepts TLS connections. Out of the box it uses a self-signed certificate. If the
+container is started with `-e TLS_DOMAIN=<hostname>`, it requests a certificate for that hostname
+from Let's Encrypt and uses that instead. Setting `TLS_DOMAIN` means that you agree to the
+[Let's Encrypt Subscriber Agreement](https://letsencrypt.org/repository/).
+
+* `TLS_DOMAIN`: the hostname that clients use to connect to Postgres.
+* `TLS_EMAIL`: optional contact address for the Let's Encrypt account.
+* `TLS_STAGING=1`: optional, use the Let's Encrypt staging environment. Use this when testing, to
+  stay clear of the rate limits of the production environment.
+
+Let's Encrypt validates the hostname over HTTP, and the nginx in the container answers. For this
+to work `http://<TLS_DOMAIN>/.well-known/acme-challenge/` must reach port 80 of the container, so
+the reverse proxy on the host has to forward that path over plain HTTP, without redirecting it to
+HTTPS.
+
+`scripts/renew_cert.sh` runs under supervisord and checks the certificate once a day. When the
+certificate is 30 days old it requests a new one, copies it to `/etc/postgresql/17/main/tls` and
+tells Postgres to reload its configuration. Postgres then uses the new certificate for new
+connections, existing connections are not interrupted.
+
+The certificate and the Let's Encrypt account live in `/etc/letsencrypt`. Keep that directory on a
+volume, as in the `docker run` command above. Otherwise every restart of the container requests a
+new certificate, and Let's Encrypt only issues a handful of certificates per hostname per week.
+
+Validate that Postgres presents a certificate that clients trust.
+
+```
+psql "postgresql://udd:udd@udd-mirror.debian.net/udd?sslmode=verify-full&sslrootcert=system" -c 'select ssl, version from pg_stat_ssl where pid = pg_backend_pid()'
+```
+
+Unencrypted connections are still accepted, so that existing users are not locked out.
 
 Deploying new versions to production
 ====================================
