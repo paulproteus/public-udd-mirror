@@ -75,7 +75,7 @@ Run the container, exposing port 5432 globally.
 
 ```
 docker build .
-docker run -p 0.0.0.0:5432:5432 --net udd-mirror-network --mount source=udd-mirror-postgres,target=/var/lib/postgresql --mount source=udd-mirror-logs,target=/var/www/html/logs --ip 172.18.0.2 $(docker build -q .)
+docker run --rm --name udd-mirror -p 0.0.0.0:5432:5432 --net udd-mirror-network --mount source=udd-mirror-postgres,target=/var/lib/postgresql --mount source=udd-mirror-logs,target=/var/www/html/logs --ip 172.18.0.2 $(docker build -q .)
 ```
 
 Validate that the container is running a Postgres instance with some data.
@@ -101,7 +101,7 @@ Type=simple
 Restart=always
 RestartSec=1
 User=udd-mirror
-ExecStart=/bin/bash -c 'cd /srv/udd-mirror && git pull && docker build . && docker run -p 0.0.0.0:5432:5432 --net udd-mirror-network --mount source=udd-mirror-postgres,target=/var/lib/postgresql --mount source=udd-mirror-logs,target=/var/www/html/logs --ip 172.18.0.2 $(docker build -q .)'
+ExecStart=/bin/bash -c 'cd /srv/udd-mirror && git pull && docker rm -f udd-mirror && docker build . && docker run --rm --name udd-mirror -p 0.0.0.0:5432:5432 --net udd-mirror-network --mount source=udd-mirror-postgres,target=/var/lib/postgresql --mount source=udd-mirror-logs,target=/var/www/html/logs --ip 172.18.0.2 $(docker build -q .)'
 
 [Install]
 WantedBy=multi-user.target
